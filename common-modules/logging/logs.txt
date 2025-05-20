@@ -1,0 +1,13 @@
+WARNING:root:amount must be a valid integer value
+WARNING:root:amount must be a valid integer value
+WARNING:root:amount must be a valid integer value
+WARNING:root:amount must be a valid integer value
+WARNING:root:amount must be a valid integer value
+WARNING:root:amount must be a valid integer value
+ERROR:root:Unknown error occurred!
+Traceback (most recent call last):
+  File "/Users/jchoi950/Dev/web/python-interview-practice/common-modules/logging/main.py", line 20, in process_transactions
+    if amount <= 0:
+       ^^^^^^^^^^^
+TypeError: '<=' not supported between instances of 'str' and 'int'
+DEBUG:root:transaction of $100 for JOHN successful
