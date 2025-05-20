@@ -1,6 +1,11 @@
 import logging
 
-logging.basicConfig(level=logging.DEBUG, filename="logs.txt")
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[logging.StreamHandler(), logging.FileHandler("logs.log")],
+)
 
 
 def process_transactions(user: str, amount: int) -> bool:
