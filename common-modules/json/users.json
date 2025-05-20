@@ -1,0 +1,18 @@
+{
+    "John": {
+        "age": "20",
+        "sex": "male"
+    },
+    "Chris": {
+        "age": 10,
+        "sex": "male"
+    },
+    "Joey": {
+        "age": 40,
+        "sex": "male"
+    },
+    "Isabel": {
+        "age": 30,
+        "sex": "female"
+    }
+}

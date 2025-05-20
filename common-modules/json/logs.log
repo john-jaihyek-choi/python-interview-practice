@@ -1,0 +1,79 @@
+2025-05-20 08:39:39 - DEBUG - Data retrieved successfully from 1.json - {'John': {'age': '20', 'sex': 'male'}}
+2025-05-20 08:52:01 - DEBUG - Data retrieved successfully from users.json - {'John': {'age': '20', 'sex': 'male'}}
+2025-05-20 08:52:01 - ERROR - Unexpected error occurred
+Traceback (most recent call last):
+  File "/Users/jchoi950/Dev/web/python-interview-practice/common-modules/json/main.py", line 29, in update_json_data
+    if user not in data:
+       ^^^^^^^^^^^^^^^^
+TypeError: argument of type 'NoneType' is not iterable
+2025-05-20 08:52:01 - ERROR - Unexpected error occurred
+Traceback (most recent call last):
+  File "/Users/jchoi950/Dev/web/python-interview-practice/common-modules/json/main.py", line 29, in update_json_data
+    if user not in data:
+       ^^^^^^^^^^^^^^^^
+TypeError: argument of type 'NoneType' is not iterable
+2025-05-20 08:52:01 - ERROR - Unexpected error occurred
+Traceback (most recent call last):
+  File "/Users/jchoi950/Dev/web/python-interview-practice/common-modules/json/main.py", line 29, in update_json_data
+    if user not in data:
+       ^^^^^^^^^^^^^^^^
+TypeError: argument of type 'NoneType' is not iterable
+2025-05-20 08:52:39 - DEBUG - Data retrieved successfully from users.json - {'John': {'age': '20', 'sex': 'male'}}
+2025-05-20 08:52:39 - INFO - user, Chris, updated successfully!
+2025-05-20 08:52:39 - INFO - user, Joey, updated successfully!
+2025-05-20 08:52:39 - INFO - user, Isabel, updated successfully!
+2025-05-20 08:53:14 - DEBUG - Data retrieved successfully from users.json - {'John': {'age': '20', 'sex': 'male'}}
+2025-05-20 08:53:14 - INFO - user, Chris, updated successfully!
+2025-05-20 08:53:14 - INFO - user, Joey, updated successfully!
+2025-05-20 08:53:14 - INFO - user, Isabel, updated successfully!
+2025-05-20 08:53:14 - ERROR - Unexpected Error
+Traceback (most recent call last):
+  File "/Users/jchoi950/Dev/web/python-interview-practice/common-modules/json/main.py", line 42, in save_json_data_to_file
+    json.dump(data, filename, indent=4)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/__init__.py", line 180, in dump
+    fp.write(chunk)
+    ^^^^^^^^
+AttributeError: 'str' object has no attribute 'write'
+2025-05-20 08:53:31 - ERROR - Unknown error
+Traceback (most recent call last):
+  File "/Users/jchoi950/Dev/web/python-interview-practice/common-modules/json/main.py", line 16, in load_json_file
+    data = json.load(file)
+  File "/usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/__init__.py", line 293, in load
+    return loads(fp.read(),
+        cls=cls, object_hook=object_hook,
+        parse_float=parse_float, parse_int=parse_int,
+        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+2025-05-20 08:53:31 - ERROR - Unexpected error occurred
+Traceback (most recent call last):
+  File "/Users/jchoi950/Dev/web/python-interview-practice/common-modules/json/main.py", line 29, in update_json_data
+    if user not in data:
+       ^^^^^^^^^^^^^^^^
+TypeError: argument of type 'NoneType' is not iterable
+2025-05-20 08:53:31 - ERROR - Unexpected error occurred
+Traceback (most recent call last):
+  File "/Users/jchoi950/Dev/web/python-interview-practice/common-modules/json/main.py", line 29, in update_json_data
+    if user not in data:
+       ^^^^^^^^^^^^^^^^
+TypeError: argument of type 'NoneType' is not iterable
+2025-05-20 08:53:31 - ERROR - Unexpected error occurred
+Traceback (most recent call last):
+  File "/Users/jchoi950/Dev/web/python-interview-practice/common-modules/json/main.py", line 29, in update_json_data
+    if user not in data:
+       ^^^^^^^^^^^^^^^^
+TypeError: argument of type 'NoneType' is not iterable
+2025-05-20 08:53:31 - INFO - New data written to users.json
+2025-05-20 08:54:03 - DEBUG - Data retrieved successfully from users.json - {'John': {'age': '20', 'sex': 'male'}}
+2025-05-20 08:54:03 - INFO - user, Chris, updated successfully!
+2025-05-20 08:54:03 - INFO - user, Joey, updated successfully!
+2025-05-20 08:54:03 - INFO - user, Isabel, updated successfully!
+2025-05-20 08:54:03 - INFO - New data written to users.json
