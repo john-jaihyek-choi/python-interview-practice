@@ -1,1 +1,22 @@
 2025-05-19 23:08:10 - DEBUG - transaction of $100 for john successful
+2025-05-20 08:20:46 - INFO - Informational log
+2025-05-20 08:20:46 - DEBUG - Logs for debugging
+2025-05-20 08:20:46 - WARNING - Logs to give warnings
+2025-05-20 08:20:46 - CRITICAL - Critial logs
+2025-05-20 08:20:46 - ERROR - Logs used for exception catching
+2025-05-20 08:20:46 - ERROR - Errors
+2025-05-20 08:20:50 - DEBUG - transaction of $100 for John successful
+2025-05-20 08:21:02 - INFO - Informational log
+2025-05-20 08:21:02 - DEBUG - Logs for debugging
+2025-05-20 08:21:02 - WARNING - Logs to give warnings
+2025-05-20 08:21:02 - CRITICAL - Critial logs
+2025-05-20 08:21:02 - ERROR - Logs used for exception catching
+NoneType: None
+2025-05-20 08:21:02 - ERROR - Errors
+2025-05-20 08:22:04 - INFO - Informational log
+2025-05-20 08:22:04 - DEBUG - Logs for debugging
+2025-05-20 08:22:04 - WARNING - Logs to give warnings
+2025-05-20 08:22:04 - CRITICAL - Critial logs
+2025-05-20 08:22:04 - ERROR - Logs used for exception catching
+NoneType: None
+2025-05-20 08:22:04 - ERROR - Errors

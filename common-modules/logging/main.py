@@ -7,6 +7,14 @@ logging.basicConfig(
     handlers=[logging.StreamHandler(), logging.FileHandler("logs.log")],
 )
 
+# Most commonly and frequently used log levels
+logging.info("Informational log")
+logging.debug("Logs for debugging")
+logging.warning("Logs to give warnings")
+logging.critical("Critial logs")
+logging.exception("Logs used for exception catching")
+logging.error("Errors")
+
 
 def process_transactions(user: str, amount: int) -> bool:
     try:
@@ -35,4 +43,9 @@ def process_transactions(user: str, amount: int) -> bool:
 user = input("user: ")
 amount = input("amount: ")
 
-process_transactions(user, amount)
+try:
+    process_transactions(user, int(amount))
+except ValueError:
+    logging.exception(f"amount, {amount}, must be a number")
+except Exception:
+    logging.exception("Unknown error")
