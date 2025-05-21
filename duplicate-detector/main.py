@@ -1,6 +1,8 @@
 import logging
 import os
 import re
+import argparse
+import json
 from pathlib import Path
 from typing import List, Dict
 from collections import defaultdict
@@ -53,8 +55,6 @@ Problem Breakdown:
     4. Report the result
         - iterate on the stored paragraph-file relation and 
 """
-
-DATA_DIR = "data/"
 
 
 # 1. Locate .txt files from the data directory
@@ -140,39 +140,80 @@ def group_paragraphs(data_dir_path: str) -> Dict[str, set]:
 
     for file in files:
         for paragraph in extract_paragraphs(file):
-            detected[paragraph].add(file)
+            detected[paragraph].add(Path(file).name)
 
     return detected
 
 
 # 4. Report duplicates
-def print_duplicates(
-    paragraph_collection: Dict[str, set], files_found_in_count: int
+def output_duplicates(
+    paragraph_collection: Dict[str, set],
+    files_found_in_count: int,
+    output_dst: str = None,
 ) -> None:
     """
-    Prints duplicate that exceeds files_found_in_count.
+    Print duplicates to stdout OR write the results to a defined output destination.
 
     Args:
         paragraph_collection (Dict[str, set]): Dictionary of paragraph-files pair.
-        files_found_in_count (int): Threshold for duplicates
+        files_found_in_count (int): Threshold for duplicates.
+        output_dst (str): Path to a file an output would be written to.
 
     Returns:
         None
     """
-    if not paragraph_collection:
-        print(f"No paragraphs detected")
 
-    duplicates = 0
-    for paragraph, files in paragraph_collection.items():
-        if len(files) >= files_found_in_count:
-            duplicates += 1
-            print(f"Duplicate Paragraph: {paragraph}\n", f"-> Found in: {list(files)}")
+    duplicates = {
+        paragraph: sorted(files)
+        for paragraph, files in paragraph_collection.items()
+        if len(files) >= files_found_in_count
+    }
 
     if not duplicates:
         print(f"No duplicates found!")
 
+    if output_dst:
+        try:
+            with open(output_dst, "w", encoding="utf-8") as file:
+                json.dump(duplicates, file, indent=4)
+            print(f"Duplicates written to {output_dst}")
+        except Exception:
+            logging.exception(f"Failed to write output to {output_dst}")
+    else:
+        for paragraph, files in duplicates.items():
+            if len(files) >= files_found_in_count:
+                print(
+                    f"Duplicate Paragraph: {paragraph}\n", f"-> Found in: {list(files)}"
+                )
+
+
+# Parse CLI arguments
+def parse_args() -> None:
+    parser = argparse.ArgumentParser(
+        description="Detect duplicate paragraphs across .txt files"
+    )
+    parser.add_argument(
+        "-d",
+        "--dir",
+        default="data/",
+        type=str,
+        help="Path to the directory that contains the .txt files",
+    )
+    parser.add_argument(
+        "-th",
+        "--threshold",
+        default=1,
+        type=int,
+        help="Number of files that contain duplicates to be detected as duplicate",
+    )
+    parser.add_argument(
+        "-o", "--output", type=str, help="Optional path to save results as JSON"
+    )
+    return parser.parse_args()
+
 
 if __name__ == "__main__":
-    paragraphs = group_paragraphs(DATA_DIR)
+    args = parse_args()
+    paragraphs = group_paragraphs(args.dir)
 
-    print_duplicates(paragraphs, 2)
+    output_duplicates(paragraphs, args.threshold, args.output)

@@ -1,0 +1,19 @@
+{
+    "hello world! this is a sample paragraph.": [
+        "a.txt",
+        "c.txt"
+    ],
+    "this is yet another unique paragraph.": [
+        "c.txt"
+    ],
+    "this is another paragraph.": [
+        "a.txt",
+        "b.txt"
+    ],
+    "this is unique to file b.": [
+        "b.txt"
+    ],
+    "some text": [
+        "d.txt"
+    ]
+}
