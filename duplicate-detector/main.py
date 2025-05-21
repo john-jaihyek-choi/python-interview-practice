@@ -6,7 +6,7 @@ from typing import List, Dict
 from collections import defaultdict
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     handlers=[logging.StreamHandler()],
@@ -31,7 +31,7 @@ Note:
     - directory of .txt files
     - file contains plain-text paragraphs
         - separated by blank lines
-    - Duplicacy:
+    - Duplicates:
         - ignore leading/trailing whitespaces
         - case insensitive
         - ignore redundant spaces
@@ -73,8 +73,10 @@ def get_text_files(path: str) -> List[str]:
         return files
     except FileNotFoundError:
         logging.exception(f"Directory {path} does not exist!")
+        return []
     except Exception as e:
         logging.exception(f"Unexpected failure getting text files from {path}: {e}")
+        return []
 
 
 # 2. Extract pragraphs from the file
@@ -98,8 +100,9 @@ def extract_paragraphs(file_path: str) -> List[str]:
         ]
     except Exception as e:
         logging.exception(
-            f"Unexpected failure extracting text files from {file_path}: {e}"
+            f"Unexpected failure extracting paragraphs from {file_path}: {e}"
         )
+        return []
 
 
 def normalize_string(string: str) -> str:
@@ -129,6 +132,10 @@ def group_paragraphs(data_dir_path: str) -> Dict[str, set]:
 
     files = get_text_files(data_dir_path)
 
+    if not files:
+        logging.warning(f"No files found in {data_dir_path}")
+        return {}
+
     detected = defaultdict(set)
 
     for file in files:
@@ -152,12 +159,14 @@ def print_duplicates(
     Returns:
         None
     """
+    if not paragraph_collection:
+        print(f"No paragraphs detected")
 
     duplicates = 0
     for paragraph, files in paragraph_collection.items():
         if len(files) >= files_found_in_count:
             duplicates += 1
-            print(f"Paragraph: {paragraph}\n", f"Files: {files}")
+            print(f"Duplicate Paragraph: {paragraph}\n", f"-> Found in: {list(files)}")
 
     if not duplicates:
         print(f"No duplicates found!")
