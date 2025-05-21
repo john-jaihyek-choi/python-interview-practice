@@ -151,7 +151,15 @@ class TextFileDirectory:
         return paragraphs
 
     def _filter_duplicates(self, paragraphs: Dict[str, set]) -> Dict[str, set]:
+        """
+        Filters duplicating paragraphs
 
+        Args:
+            paragraphs (Dict[str, set]): Paragraph-file mapping
+
+        Returns:
+            Dict[str, set]: Paragraphs that are duplicates across files
+        """
         return {
             paragraph: sorted(files)
             for paragraph, files in paragraphs.items()
@@ -187,6 +195,15 @@ class TextFileDirectory:
 
 # Parse CLI arguments
 def parse_args() -> None:
+    """
+    Parses arguments for script to run on CLI.
+
+    Args:
+        None
+
+    Return:
+        Parser
+    """
     parser = argparse.ArgumentParser(
         description="Detect duplicate paragraphs across .txt files"
     )
