@@ -123,13 +123,13 @@ class TextFileDirectory:
 
     # 3. Identifies duplicate paragraphs
     def group_paragraphs_by_file(
-        self, transform: Optional[Callable[[str], str]]
+        self, transform: Optional[Callable[[str], str]] = None
     ) -> Dict[str, set]:
         """
         Group all unique paragraphs by file
 
         Args:
-            transform (Callable[[str], str]): Boolean value for paragraph normalization
+            transform (Callable[[str], str]): Desired transformation function. None by default
 
         Returns:
             Dict[str,set]: Dictionary of paragraph-files pair.
@@ -238,7 +238,7 @@ if __name__ == "__main__":
         for paragraph, files in duplicates.items():
             print(
                 f"Duplicate Paragraph: {paragraph}\n",
-                f"-> Found in: {list(files)}",
+                f"-> Found in: {files}",
             )
 
         if args.output:
