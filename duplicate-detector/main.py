@@ -4,7 +4,7 @@ import re
 import argparse
 import json
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Literal, Optional, Callable
 from collections import defaultdict
 
 logging.basicConfig(
@@ -56,135 +56,133 @@ Problem Breakdown:
         - iterate on the stored paragraph-file relation and 
 """
 
-
-# 1. Locate .txt files from the data directory
-def get_text_files(path: str) -> List[str]:
-    """
-    Recursively get txt files from a given directory.
-
-    Args:
-        path (str): Path to the txt files directory.
-
-    Returns:
-        List[str]: List of txt files in the given path.
-    """
-    try:
-        files = [str(file) for file in Path(path).rglob("*.txt")]
-        return files
-    except FileNotFoundError:
-        logging.exception(f"Directory {path} does not exist!")
-        return []
-    except Exception as e:
-        logging.exception(f"Unexpected failure getting text files from {path}: {e}")
-        return []
+MatchType = Literal["exact", "soft", "fuzzy"]
 
 
-# 2. Extract pragraphs from the file
-def extract_paragraphs(file_path: str) -> List[str]:
-    """
-    Extracts all normalized paragraphs from a file.
+class TextFileDirectory:
+    def __init__(self, directory: str):
+        self.dir_path = directory
 
-    Args:
-        file_path (str): Path to the txt files.
+    # 1. Locate .txt files from the data directory
+    def _list_text_files(self) -> List[str]:
+        """
+        Recursively get txt files from self.dir_path.
 
-    Returns:
-        List[str]: List of normalized paragraphs strings.
-    """
-    try:
+        Args:
+            None
+
+        Returns:
+            List[str]: List of txt files in the given path.
+        """
+
+        return [str(file) for file in Path(self.dir_path).rglob("*.txt")]
+
+    # 2. Extracts all paragraphs from a single file
+    def _extract_paragraphs(self, file_path: str) -> List[str]:
+        """
+        Extracts all normalized paragraphs from a file.
+
+        Args:
+            file_path (str): Path to the txt files.
+
+        Returns:
+            List[str]: List of normalized paragraphs strings.
+        """
+
+        if file_path is None:
+            raise TypeError("file_path should be non-None and string argument")
+
         with open(file_path, "r") as file:
             content = file.read()
 
-        return [
-            normalize_string(paragraph)
-            for paragraph in re.split(r"\n\s*\n", content.strip())
-        ]
-    except Exception as e:
-        logging.exception(
-            f"Unexpected failure extracting paragraphs from {file_path}: {e}"
-        )
-        return []
+        content = re.split(
+            r"\n\s*\n", content.strip()
+        )  # split paragraphs - delimiter == \n
 
+        return [paragraph for paragraph in content]
 
-def normalize_string(string: str) -> str:
-    """
-    Normalizes a given string: lowercase conversion and redundant spacing removal.
+    def _normalize(self, string: str) -> str:
+        """
+        Normalizes a given string: lowercase conversion and redundant spacing removal.
 
-    Args:
-        string (str): Paragraph string to normalize.
+        Args:
+            string (str): Paragraph string to normalize.
 
-    Returns:
-        str: Normalized paragraph.
-    """
-    return re.sub(r"\s+", " ", string.lower())
+        Returns:
+            str: Normalized paragraph.
+        """
+        if string is None:
+            raise TypeError("Expected a non-None string as argument")
 
+        if not isinstance(string, str):
+            string = str(string)
 
-# 3. Collect extracted paragraphs
-def group_paragraphs(data_dir_path: str) -> Dict[str, set]:
-    """
-    Groups every paragraph from files in to a dictionary.
+        return re.sub(
+            r"\s+", " ", string.lower().strip()
+        )  # remove redundant spaces from a string
 
-    Args:
-        data_dir_path (str): Path of the directory that contains text files.
+    # 3. Identifies duplicate paragraphs
+    def group_paragraphs_by_file(
+        self, transform: Optional[Callable[[str], str]]
+    ) -> Dict[str, set]:
+        """
+        Group all unique paragraphs by file
 
-    Returns:
-        Dict[str,set]: Dictionary of paragraph-files pair.
-    """
+        Args:
+            transform (Callable[[str], str]): Boolean value for paragraph normalization
 
-    files = get_text_files(data_dir_path)
+        Returns:
+            Dict[str,set]: Dictionary of paragraph-files pair.
+        """
 
-    if not files:
-        logging.warning(f"No files found in {data_dir_path}")
-        return {}
+        files = self._list_text_files()
 
-    detected = defaultdict(set)
+        if not files:
+            logging.warning(f"No files found in {self.dir_path}")
+            return {}
 
-    for file in files:
-        for paragraph in extract_paragraphs(file):
-            detected[paragraph].add(Path(file).name)
+        paragraphs: Dict[str, set] = defaultdict(set)
 
-    return detected
+        for file in files:
+            for paragraph in self._extract_paragraphs(file_path=file):
+                p = transform(paragraph) if transform else paragraph
+                paragraphs[p].add(Path(file).name)
 
+        return paragraphs
 
-# 4. Report duplicates
-def output_duplicates(
-    paragraph_collection: Dict[str, set],
-    files_found_in_count: int,
-    output_dst: str = None,
-) -> None:
-    """
-    Print duplicates to stdout OR write the results to a defined output destination.
+    def _filter_duplicates(self, paragraphs: Dict[str, set]) -> Dict[str, set]:
 
-    Args:
-        paragraph_collection (Dict[str, set]): Dictionary of paragraph-files pair.
-        files_found_in_count (int): Threshold for duplicates.
-        output_dst (str): Path to a file an output would be written to.
+        return {
+            paragraph: sorted(files)
+            for paragraph, files in paragraphs.items()
+            if len(files) > 1
+        }
 
-    Returns:
-        None
-    """
+    # 4. Report duplicates
+    def find_duplicates(self, match_type: MatchType = "soft") -> Dict[str, set]:
+        """
+        Finds and returns duplicating paragraph-file key-val pair.
 
-    duplicates = {
-        paragraph: sorted(files)
-        for paragraph, files in paragraph_collection.items()
-        if len(files) >= files_found_in_count
-    }
+        Args:
+            match_type ("soft"|"exact"|"fuzzy"): match type to detect duplicates
 
-    if not duplicates:
-        print(f"No duplicates found!")
+        Returns:
+            Dict[str,set]: Dictionary containing paragraphs and the file locations
+        """
 
-    if output_dst:
-        try:
-            with open(output_dst, "w", encoding="utf-8") as file:
-                json.dump(duplicates, file, indent=4)
-            print(f"Duplicates written to {output_dst}")
-        except Exception:
-            logging.exception(f"Failed to write output to {output_dst}")
-    else:
-        for paragraph, files in duplicates.items():
-            if len(files) >= files_found_in_count:
-                print(
-                    f"Duplicate Paragraph: {paragraph}\n", f"-> Found in: {list(files)}"
-                )
+        if match_type == "fuzzy":
+            raise NotImplementedError("Fuzzy filter not implemented yet...")
+
+        # use internal normalizer if "soft" or "fuzzy"
+        transformer_func = self._normalize if match_type != "exact" else None
+        paragraphs = self.group_paragraphs_by_file(transformer_func)
+        duplicates = self._filter_duplicates(paragraphs)
+
+        if not duplicates:
+            logging.info(f"No duplicates found!")
+            return {}
+
+        return duplicates
 
 
 # Parse CLI arguments
@@ -200,11 +198,11 @@ def parse_args() -> None:
         help="Path to the directory that contains the .txt files",
     )
     parser.add_argument(
-        "-th",
-        "--threshold",
-        default=1,
-        type=int,
-        help="Number of files that contain duplicates to be detected as duplicate",
+        "-m",
+        "--match",
+        default="soft",
+        type=str,
+        help="Match type to detect duplicates",
     )
     parser.add_argument(
         "-o", "--output", type=str, help="Optional path to save results as JSON"
@@ -213,7 +211,23 @@ def parse_args() -> None:
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    paragraphs = group_paragraphs(args.dir)
+    try:
+        args = parse_args()
+        text_file_directory = TextFileDirectory(args.dir)
+        duplicates: Dict[str, set] = text_file_directory.find_duplicates(
+            match_type=args.match
+        )
 
-    output_duplicates(paragraphs, args.threshold, args.output)
+        for paragraph, files in duplicates.items():
+            print(
+                f"Duplicate Paragraph: {paragraph}\n",
+                f"-> Found in: {list(files)}",
+            )
+
+        if args.output:
+            with open(args.output, "w", encoding="utf-8") as file:
+                json.dump(duplicates, file, indent=4)
+            print(f"Duplicates written to {args.output}")
+
+    except Exception as e:
+        logging.exception(f"Unexpected error detecting duplicate paragraphs: {e}")
