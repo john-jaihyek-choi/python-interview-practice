@@ -13,7 +13,7 @@ logging.basicConfig(
 
 
 # Parse CLI arguments
-def parse_args() -> None:
+def parse_args() -> argparse.Namespace:
     """
     Parses arguments for script to run on CLI.
 

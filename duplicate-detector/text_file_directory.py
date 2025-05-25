@@ -138,7 +138,7 @@ class TextFileDirectory:
         if file_path is None:
             raise TypeError("file_path should be non-None and string argument")
 
-        with open(file_path, "r") as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             content = file.read()
 
         content = re.split(
@@ -147,7 +147,7 @@ class TextFileDirectory:
 
         return [paragraph for paragraph in content]
 
-    def __filter_duplicates(self, paragraphs: Dict[str, set]) -> Dict[str, set]:
+    def __filter_duplicates(self, paragraphs: Dict[str, set]) -> Dict[str, List[str]]:
         """
         Filters duplicating paragraphs
 
